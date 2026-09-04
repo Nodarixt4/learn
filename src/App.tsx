@@ -109,7 +109,7 @@ const sources = [
 ]
 
 function Brand() {
-  return <div className="brand" aria-label="Aptum Tecnologia"><span className="brand-mark"><i /><i /><i /></span><span>APTUM<small>TECNOLOGIA</small></span></div>
+  return <div className="brand" aria-label="Aptum Tecnologia"><span className="brand-wordmark">APTUM</span><small>TECNOLOGIA</small></div>
 }
 
 function LayerPill({ layer }: { layer: Layer }) {
