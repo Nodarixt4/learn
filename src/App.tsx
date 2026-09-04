@@ -111,14 +111,14 @@ const equipmentAnalogies: Record<string, string> = {
   server: 'É como um prédio preparado para abrigar empresas. O hardware fornece espaço, energia e estrutura; o hipervisor administra os ambientes; as VMs são salas independentes; e os serviços são os trabalhos realizados dentro delas.',
 }
 
-const equipmentPhotos: Record<string, { src: string; alt: string; credit: string; source: string }> = {
-  pmu: { src: '/equipment/pmu.jpg', alt: 'Painel elétrico de distribuição com disjuntores e circuitos identificados', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:A_distribution_board_in_Salacgr%C4%ABva.jpg' },
-  firewall: { src: '/equipment/firewall.png', alt: 'Equipamento de segurança Fortinet FortiGate visto pela frente', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:Fortinet_FortiGate_6501F.png' },
-  switch: { src: '/equipment/switch.jpg', alt: 'Switch de rede instalado em rack junto a outros equipamentos', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:The_Gathering_2019_-_Switch,_server_and_firewall_(46813726365).jpg' },
-  patch: { src: '/equipment/patch-panel.jpg', alt: 'Parte traseira de um patch panel mostrando as terminações dos cabos', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:Network_Patch_Panel_Clean_Back.jpg' },
-  ups: { src: '/equipment/ups.jpg', alt: 'Fonte de alimentação ininterrupta, também chamada UPS ou nobreak', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:UPS_-_uninterruptible_power_supply.JPG' },
-  battery: { src: '/equipment/battery.jpg', alt: 'UPS aberta exibindo baterias e componentes internos', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:Uninterruptible_power_supply.jpg' },
-  server: { src: '/equipment/server.jpg', alt: 'Frente de servidores físicos montados em racks de datacenter', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:Front_of_server_racks_at_NERSC.jpg' },
+const equipmentPhotos: Record<string, { src: string; alt: string; position: string }> = {
+  pmu: { src: '/equipment/pmu.jpg', alt: 'Painel de monitoramento e distribuição elétrica instalado no rack Aptum', position: '50% 58%' },
+  firewall: { src: '/equipment/firewall.jpg', alt: 'Firewall Fortinet FortiGate instalado no rack Aptum', position: '50% 43%' },
+  switch: { src: '/equipment/switch.jpg', alt: 'Switch Cisco Catalyst com suas portas e conexões de rede', position: '50% 50%' },
+  patch: { src: '/equipment/patch-panel.jpg', alt: 'Patch panels e cabos de rede organizados no rack Aptum', position: '50% 38%' },
+  ups: { src: '/equipment/ups.jpg', alt: 'UPS ou nobreak instalado na parte inferior do rack Aptum', position: '50% 32%' },
+  battery: { src: '/equipment/battery.jpg', alt: 'Módulos externos de bateria instalados abaixo da UPS', position: '50% 78%' },
+  server: { src: '/equipment/server.jpg', alt: 'Servidor físico Dell EMC PowerEdge instalado no rack Aptum', position: '50% 52%' },
 }
 
 const sources = [
@@ -237,8 +237,8 @@ function Analogy({ children }: { children: React.ReactNode }) {
 function EquipmentPhoto({ equipmentId, name }: { equipmentId: string; name: string }) {
   const photo = equipmentPhotos[equipmentId] ?? equipmentPhotos.server
   return <figure className="equipment-photo">
-    <img src={photo.src} alt={photo.alt} loading="lazy" />
-    <figcaption><span>Foto de referência · {name}</span><a href={photo.source} target="_blank" rel="noreferrer">Fonte: {photo.credit}<ExternalLink /></a></figcaption>
+    <img src={photo.src} alt={photo.alt} loading="lazy" style={{ objectPosition: photo.position }} />
+    <figcaption><span>Foto do ambiente · {name}</span><small>Acervo Aptum</small></figcaption>
   </figure>
 }
 
