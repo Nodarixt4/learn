@@ -111,6 +111,16 @@ const equipmentAnalogies: Record<string, string> = {
   server: 'É como um prédio preparado para abrigar empresas. O hardware fornece espaço, energia e estrutura; o hipervisor administra os ambientes; as VMs são salas independentes; e os serviços são os trabalhos realizados dentro delas.',
 }
 
+const equipmentPhotos: Record<string, { src: string; alt: string; credit: string; source: string }> = {
+  pmu: { src: '/equipment/pmu.jpg', alt: 'Painel elétrico de distribuição com disjuntores e circuitos identificados', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:A_distribution_board_in_Salacgr%C4%ABva.jpg' },
+  firewall: { src: '/equipment/firewall.png', alt: 'Equipamento de segurança Fortinet FortiGate visto pela frente', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:Fortinet_FortiGate_6501F.png' },
+  switch: { src: '/equipment/switch.jpg', alt: 'Switch de rede instalado em rack junto a outros equipamentos', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:The_Gathering_2019_-_Switch,_server_and_firewall_(46813726365).jpg' },
+  patch: { src: '/equipment/patch-panel.jpg', alt: 'Parte traseira de um patch panel mostrando as terminações dos cabos', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:Network_Patch_Panel_Clean_Back.jpg' },
+  ups: { src: '/equipment/ups.jpg', alt: 'Fonte de alimentação ininterrupta, também chamada UPS ou nobreak', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:UPS_-_uninterruptible_power_supply.JPG' },
+  battery: { src: '/equipment/battery.jpg', alt: 'UPS aberta exibindo baterias e componentes internos', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:Uninterruptible_power_supply.jpg' },
+  server: { src: '/equipment/server.jpg', alt: 'Frente de servidores físicos montados em racks de datacenter', credit: 'Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:Front_of_server_racks_at_NERSC.jpg' },
+}
+
 const sources = [
   { label: 'Fortinet — inspeção profunda SSL/TLS', url: 'https://docs.fortinet.com/document/fortigate/7.6.4/administration-guide/122078/deep-inspection' },
   { label: 'Cisco — servidores UCS C-Series', url: 'https://www.cisco.com/c/en/us/support/servers-unified-computing/ucs-c-series-rack-servers/series.html' },
@@ -224,6 +234,14 @@ function Analogy({ children }: { children: React.ReactNode }) {
   return <div className="analogy"><Lightbulb /><p><strong>Pense assim</strong>{children}</p></div>
 }
 
+function EquipmentPhoto({ equipmentId, name }: { equipmentId: string; name: string }) {
+  const photo = equipmentPhotos[equipmentId] ?? equipmentPhotos.server
+  return <figure className="equipment-photo">
+    <img src={photo.src} alt={photo.alt} loading="lazy" />
+    <figcaption><span>Foto de referência · {name}</span><a href={photo.source} target="_blank" rel="noreferrer">Fonte: {photo.credit}<ExternalLink /></a></figcaption>
+  </figure>
+}
+
 function ExamBlock({ chapter }: { chapter: keyof typeof examQuestions }) {
   const questions = examQuestions[chapter]
   const [current, setCurrent] = useState(0)
@@ -272,7 +290,7 @@ function RackChapter({ selected, setSelected, activeLayer, setActiveLayer }: { s
         </div>
         <div className="knowledge-panel" key={`${selected.id}-${tab}`}>
           {tab === 'what' && <><span>FUNÇÃO NO AMBIENTE</span><p>{knowledge.what}</p><Analogy>{equipmentAnalogies[selected.id] ?? equipmentAnalogies.server}</Analogy><strong>Por que existe?</strong><p>{selected.description} Sem essa função, a cadeia perde organização, conectividade, processamento ou continuidade.</p></>}
-          {tab === 'inside' && <><span>COMO FUNCIONA</span><p>{knowledge.inside}</p><div className="inside-view"><div className="board"><i /><i /><i /><i /><span className="fan f1" /><span className="fan f2" /></div><small>REPRESENTAÇÃO DIDÁTICA — NÃO É UM DIAGRAMA DO MODELO</small></div></>}
+          {tab === 'inside' && <><span>COMO FUNCIONA</span><p>{knowledge.inside}</p><EquipmentPhoto equipmentId={selected.id} name={selected.name} /><small className="photo-note">A foto ajuda no reconhecimento visual. O modelo ou a configuração instalada pode variar.</small></>}
           {tab === 'connections' && <><span>ENTRADA → FUNÇÃO → SAÍDA</span><p>{knowledge.connections}</p><div className="connection-chain"><i>ENTRADA</i><ChevronRight /><b>{selected.short}</b><ChevronRight /><i>PRÓXIMA CAMADA</i></div><strong>Dependência importante</strong><p>O equipamento pode estar saudável e ainda assim o serviço falhar em uma peça anterior ou posterior.</p></>}
           {tab === 'diagnose' && <div className="diagnose-grid"><div><span>O QUE OBSERVAR</span>{knowledge.observe.map(item => <p key={item}><Check />{item}</p>)}</div><div><span>FALHAS TÍPICAS</span>{knowledge.failures.map(item => <p key={item}><TriangleAlert />{item}</p>)}</div><section><strong>Como confirmar</strong><p>{knowledge.confirm}</p></section></div>}
         </div>
