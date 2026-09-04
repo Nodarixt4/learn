@@ -101,6 +101,15 @@ const rackKnowledge: Record<string, { what: string; inside: string; connections:
 }
 
 const serverKnowledge = { what: 'É um computador físico preparado para operação contínua. O chassi reúne processamento, memória, rede, armazenamento, refrigeração e fontes.', inside: 'CPU executa instruções; RAM mantém dados ativos; controladora e discos persistem dados; NICs levam quadros à rede; firmware inicializa e monitora o hardware.', connections: 'Recebe energia das PDUs, dados do switch e uma rede separada de gestão. Pode executar ESXi e hospedar várias VMs e serviços.', observe: ['Saúde em CIMC, iDRAC ou iLO', 'Fontes, ventiladores, discos e temperatura', 'NICs, hipervisor e VMs afetadas'], failures: ['Disco ou fonte degradada', 'Memória/CPU com erro', 'Sistema, hipervisor ou interface travada'], confirm: 'Inventário + controladora fora de banda + hipervisor + monitoramento. Etiqueta frontal não confirma a função atual.' }
+const equipmentAnalogies: Record<string, string> = {
+  pmu: 'Pense no quadro elétrico de uma casa, mas atendendo um armário inteiro de tecnologia. Ele separa circuitos e interrompe uma corrente perigosa; não guarda energia e não garante que os aparelhos estejam funcionando.',
+  firewall: 'Imagine a portaria de um condomínio. Saber para qual bloco uma pessoa vai é a rota; verificar se ela está autorizada é a política; registrar sua entrada é o estado da sessão. A portaria pode conhecer o caminho e, ainda assim, negar a passagem.',
+  switch: 'Funciona como um entregador dentro de um único prédio. Ele aprende em qual sala está cada destinatário e entrega diretamente. Quando ainda não conhece a sala, pergunta em todas as salas daquele andar lógico, isto é, daquela VLAN.',
+  patch: 'É semelhante a uma central de tomadas identificadas: organiza onde cada cabo permanente termina e permite ligá-lo ao switch com um cabo curto. Ele apenas conduz o sinal; não lê, decide nem protege o conteúdo.',
+  ups: 'É uma caixa-d’água com filtro para energia: durante o abastecimento normal, trata a entrada e mantém a reserva; quando a rua para de fornecer, a reserva sustenta o consumo por tempo limitado. Quanto mais torneiras abertas, menor o tempo.',
+  battery: 'É o reservatório da UPS. Ver o reservatório instalado não informa quanto ainda cabe nele nem por quanto tempo sustentará o ambiente; idade, calor e testes determinam sua capacidade real.',
+  server: 'É como um prédio preparado para abrigar empresas. O hardware fornece espaço, energia e estrutura; o hipervisor administra os ambientes; as VMs são salas independentes; e os serviços são os trabalhos realizados dentro delas.',
+}
 
 const sources = [
   { label: 'Fortinet — inspeção profunda SSL/TLS', url: 'https://docs.fortinet.com/document/fortigate/7.6.4/administration-guide/122078/deep-inspection' },
@@ -211,6 +220,10 @@ function ChapterTitle({ number, title, lead, icon: Icon }: { number: string; tit
   return <div className="chapter-title"><div className="chapter-icon"><Icon /></div><div><span>{number}</span><h2>{title}</h2><p>{lead}</p></div></div>
 }
 
+function Analogy({ children }: { children: React.ReactNode }) {
+  return <div className="analogy"><Lightbulb /><p><strong>Pense assim</strong>{children}</p></div>
+}
+
 function ExamBlock({ chapter }: { chapter: keyof typeof examQuestions }) {
   const questions = examQuestions[chapter]
   const [current, setCurrent] = useState(0)
@@ -258,7 +271,7 @@ function RackChapter({ selected, setSelected, activeLayer, setActiveLayer }: { s
           {([['what','O que é'],['inside','Por dentro'],['connections','Conexões'],['diagnose','Diagnóstico']] as const).map(([id, label]) => <button key={id} className={tab === id ? 'active' : ''} onClick={() => setTab(id)}>{label}</button>)}
         </div>
         <div className="knowledge-panel" key={`${selected.id}-${tab}`}>
-          {tab === 'what' && <><span>FUNÇÃO NO AMBIENTE</span><p>{knowledge.what}</p><strong>Por que existe?</strong><p>{selected.description} Sem essa função, a cadeia perde organização, conectividade, processamento ou continuidade.</p></>}
+          {tab === 'what' && <><span>FUNÇÃO NO AMBIENTE</span><p>{knowledge.what}</p><Analogy>{equipmentAnalogies[selected.id] ?? equipmentAnalogies.server}</Analogy><strong>Por que existe?</strong><p>{selected.description} Sem essa função, a cadeia perde organização, conectividade, processamento ou continuidade.</p></>}
           {tab === 'inside' && <><span>COMO FUNCIONA</span><p>{knowledge.inside}</p><div className="inside-view"><div className="board"><i /><i /><i /><i /><span className="fan f1" /><span className="fan f2" /></div><small>REPRESENTAÇÃO DIDÁTICA — NÃO É UM DIAGRAMA DO MODELO</small></div></>}
           {tab === 'connections' && <><span>ENTRADA → FUNÇÃO → SAÍDA</span><p>{knowledge.connections}</p><div className="connection-chain"><i>ENTRADA</i><ChevronRight /><b>{selected.short}</b><ChevronRight /><i>PRÓXIMA CAMADA</i></div><strong>Dependência importante</strong><p>O equipamento pode estar saudável e ainda assim o serviço falhar em uma peça anterior ou posterior.</p></>}
           {tab === 'diagnose' && <div className="diagnose-grid"><div><span>O QUE OBSERVAR</span>{knowledge.observe.map(item => <p key={item}><Check />{item}</p>)}</div><div><span>FALHAS TÍPICAS</span>{knowledge.failures.map(item => <p key={item}><TriangleAlert />{item}</p>)}</div><section><strong>Como confirmar</strong><p>{knowledge.confirm}</p></section></div>}
@@ -285,6 +298,7 @@ function EnergyChapter({ failed, setFailed }: { failed: boolean; setFailed: (val
   const path = failed ? 3 : 0
   return <section className="chapter">
     <ChapterTitle number="CAPÍTULO 02" title="A energia é uma cadeia" lead="Cada peça resolve um problema diferente. Clique para simular uma falha da concessionária." icon={BatteryCharging} />
+      <Analogy>A energia percorre uma cadeia parecida com o abastecimento de água. A concessionária é a rede da cidade; o painel separa e protege os encanamentos; a PDU distribui os pontos dentro do rack; e a UPS é uma reserva temporária. Uma peça não substitui a outra.</Analogy>
     <button className={`failure-switch ${failed ? 'failed' : ''}`} onClick={() => setFailed(!failed)}><Power size={18} />{failed ? 'Restaurar concessionária' : 'Simular queda de energia'}</button>
     <div className={`energy-stage ${failed ? 'is-failed' : ''}`}>
       <div className="energy-flow">
@@ -333,12 +347,13 @@ function NetworkChapter({ packetStep, setPacketStep }: { packetStep: number; set
   ]
   return <section className="chapter wide">
     <ChapterTitle number="CAPÍTULO 03" title="Acompanhe um pacote" lead="Uma solicitação atravessa responsabilidades diferentes até virar resposta para o usuário." icon={Network} />
+      <Analogy>Trate cada pacote como uma encomenda. O DNS encontra o endereço, o IP identifica origem e destino, o gateway é a saída do bairro, os roteadores escolhem as próximas estradas e o firewall funciona como uma fiscalização. Cada etapa responde a uma pergunta diferente.</Analogy>
     <div className="packet-flow">
       <div className="packet-line"><span style={{ width: `${packetStep * 25}%` }} /></div>
       {nodes.map(({ icon: Icon, label, title, copy }, index) => <button key={title} className={index === packetStep ? 'active' : index < packetStep ? 'passed' : ''} onClick={() => setPacketStep(index)}><div className="packet-icon"><Icon /><span className="packet-dot" /></div><small>0{index + 1} · {label}</small><strong>{title}</strong><p>{copy}</p></button>)}
     </div>
     <div className="network-grid">
-      <article className="vlan-card"><div><span className="eyebrow">SEGMENTAÇÃO VISUAL</span><h3>VLAN separa. Política controla.</h3><p>VLANs criam domínios de broadcast distintos na Camada 2. Para uma VLAN falar com outra é necessária Camada 3; para controlar o acesso, entram ACLs ou regras de firewall.</p></div><VlanDiagram /></article>
+      <article className="vlan-card"><div><span className="eyebrow">SEGMENTAÇÃO VISUAL</span><h3>VLAN separa. Política controla.</h3><p>Uma VLAN divide um mesmo switch físico em bairros lógicos separados. Os anúncios feitos em um bairro — os broadcasts — não chegam automaticamente ao outro. Para atravessar bairros é preciso um elemento de Camada 3, como um roteador ou firewall. Essa travessia cria o caminho, mas não a permissão: ACLs e políticas decidem quem pode passar, para onde e usando qual serviço.</p></div><VlanDiagram /></article>
       <article className="tls-card"><span className="eyebrow">POR DENTRO DO TLS</span><h3>Criptografado não significa invisível por mágica</h3><div className="tls-flow"><div><LockKeyhole /> Cliente</div><ChevronRight /><div className="forti"><ShieldCheck /> FortiGate<small>descriptografa · inspeciona · recriptografa</small></div><ChevronRight /><div><Server /> Servidor</div></div><p>A inspeção profunda só ocorre quando configurada e quando os clientes confiam na autoridade certificadora usada pelo firewall.</p></article>
     </div>
     <div className="diagnostic-ladder"><span>Roteiro mental de diagnóstico</span>{['Físico','Enlace','Rede','Política','Serviço'].map((item, i) => <div key={item}><b>{i + 1}</b>{item}<small>{['energia · link · LEDs','porta · trunk · VLAN · MAC','IP · gateway · rota','ACL · firewall · NAT · VPN','DNS · porta · aplicação'][i]}</small></div>)}</div>
@@ -373,6 +388,7 @@ function ComputeChapter() {
   ]
   return <section className="chapter">
     <ChapterTitle number="CAPÍTULO 04" title="Da caixa física à aplicação" lead="O usuário não consome um chassi: ele consome um serviço apoiado por várias camadas." icon={Cpu} />
+      <Analogy>Imagine um edifício comercial. O host físico é o prédio; o ESXi é a administração que reparte seus recursos; cada VM é uma sala independente; e o serviço é a atividade entregue ao cliente. Se faltar energia no prédio, várias salas param, mas um problema em uma sala não significa necessariamente falha do edifício inteiro.</Analogy>
     <div className="compute-stack">
       <div className="stack-visual">{layers.map(({ title, subtitle, icon: Icon, items }, i) => <button key={title} className={`stack-layer layer-${i} ${active === i ? 'active' : ''}`} onClick={() => setActive(i)}><div className="stack-label"><Icon /><span><strong>{title}</strong><small>{subtitle}</small></span></div><div className="stack-items">{items.map(item => <i key={item}>{item}</i>)}</div></button>)}</div>
       <aside className="stack-explain"><span>CAMADA {4 - active} DE 4</span><h3>{layers[active].title}</h3><p>{[
@@ -409,6 +425,7 @@ function EvidenceChapter() {
   const CurrentIcon = evidence[level].icon
   return <section className="chapter">
     <ChapterTitle number="CAPÍTULO 05" title="Suba a escada da evidência" lead="Observar é o começo. Confirmar exige cruzar fontes antes de concluir ou agir." icon={SearchCheck} />
+      <Analogy>Diagnosticar infraestrutura se parece com investigar um caso. Uma etiqueta é uma pista, não um veredito. Inventário, configuração, logs, métricas e testes são testemunhas diferentes; quando elas concordam, a conclusão fica mais confiável.</Analogy>
     <div className="evidence-layout">
       <div className="evidence-stairs">{evidence.map((item, i) => <button key={item.title} style={{ '--i': i } as React.CSSProperties} className={i === level ? 'active' : ''} onClick={() => setLevel(i)}><span>0{i + 1}</span>{item.title}<ChevronRight /></button>)}</div>
       <div className="evidence-detail" key={level}><div className="evidence-icon"><CurrentIcon /></div><span>NÍVEL DE CONFIANÇA {level + 1}/5</span><h3>{evidence[level].title}</h3><p>{evidence[level].proof}</p><div><strong>O que isso permite afirmar?</strong>{evidence[level].example}</div></div>
