@@ -112,13 +112,21 @@ const equipmentAnalogies: Record<string, string> = {
 }
 
 const equipmentPhotos: Record<string, { src: string; alt: string; position: string }> = {
-  pmu: { src: '/equipment/pmu.jpg', alt: 'Painel de monitoramento e distribuição elétrica instalado no rack Aptum', position: '50% 58%' },
-  firewall: { src: '/equipment/firewall.jpg', alt: 'Firewall Fortinet FortiGate instalado no rack Aptum', position: '50% 43%' },
+  pmu: { src: '/equipment/painel.png', alt: 'Painel de monitoramento e distribuição elétrica instalado no rack Aptum', position: '50% 50%' },
+  firewall: { src: '/equipment/fortigate.jpg', alt: 'Firewall Fortinet FortiGate instalado no rack Aptum', position: '50% 50%' },
   switch: { src: '/equipment/switch.jpg', alt: 'Switch Cisco Catalyst com suas portas e conexões de rede', position: '50% 50%' },
-  patch: { src: '/equipment/patch-panel.jpg', alt: 'Patch panels e cabos de rede organizados no rack Aptum', position: '50% 38%' },
-  ups: { src: '/equipment/ups.jpg', alt: 'UPS ou nobreak instalado na parte inferior do rack Aptum', position: '50% 32%' },
-  battery: { src: '/equipment/battery.jpg', alt: 'Módulos externos de bateria instalados abaixo da UPS', position: '50% 78%' },
-  server: { src: '/equipment/server.jpg', alt: 'Servidor físico Dell EMC PowerEdge instalado no rack Aptum', position: '50% 52%' },
+  patch: { src: '/equipment/patch-panel.jpg', alt: 'Patch panels e cabos de rede organizados no rack Aptum', position: '50% 50%' },
+  ucs1: { src: '/equipment/cisco-ucs.jpg', alt: 'Servidor físico Cisco UCS C220 instalado no rack Aptum', position: '50% 50%' },
+  ucs2: { src: '/equipment/cisco-ucs.jpg', alt: 'Servidor físico Cisco UCS C220 instalado no rack Aptum', position: '50% 50%' },
+  ucs3: { src: '/equipment/cisco-ucs.jpg', alt: 'Servidor físico Cisco UCS C220 instalado no rack Aptum', position: '50% 50%' },
+  ucs4: { src: '/equipment/cisco-ucs.jpg', alt: 'Servidor físico Cisco UCS C220 instalado no rack Aptum', position: '50% 50%' },
+  ucs5: { src: '/equipment/cisco-ucs.jpg', alt: 'Servidor físico Cisco UCS C220 instalado no rack Aptum', position: '50% 50%' },
+  dell: { src: '/equipment/cisco-ucs.jpg', alt: 'Foto de referência dos servidores físicos instalados no rack Aptum', position: '50% 50%' },
+  hpe1: { src: '/equipment/dl380p.jpg', alt: 'Servidor físico HPE ProLiant DL380p instalado no rack Aptum', position: '50% 50%' },
+  hpe2: { src: '/equipment/dl380p.jpg', alt: 'Servidor físico HPE ProLiant DL380p instalado no rack Aptum', position: '50% 50%' },
+  ups: { src: '/equipment/nobreak.jpg', alt: 'UPS ou nobreak instalado na parte inferior do rack Aptum', position: '50% 50%' },
+  battery: { src: '/equipment/nobreak.jpg', alt: 'Conjunto de UPS e módulos externos de bateria instalado no rack Aptum', position: '50% 78%' },
+  server: { src: '/equipment/cisco-ucs.jpg', alt: 'Servidor físico Cisco UCS instalado no rack Aptum', position: '50% 50%' },
 }
 
 const sources = [
